@@ -740,3 +740,461 @@ struct NODE
 }
 ```
 
+如果两个结构体互相包含，则需要对其中一个结构体进行不完整声明。
+
+```c
+struct B;	//对结构体B进行不完整声明
+
+//结构体A中包含之指向结构体B的指针
+struct A
+{
+    struct B *partner;
+    //sss
+}
+
+//结构体B中包含结构体A的指针，在A声明完后，B也随之进行声明
+struct B
+{
+    struct A *partner;
+    //sss
+}
+```
+
+### 结构体变量的初始化
+
+和其他类型变量一样，对结构体变量可以在定义时指定初始值
+
+```c
+#include <stdio.h>
+
+struct Books
+{
+    char title[50];
+    char author[50];
+    char subject[100];
+    int book_id;
+} book = {"cyuyan","zhouleisn","bianchengyuyan",123};
+
+int main()
+{
+    printf("title:%s\nauthor:%s\nsubject:%s\nbook_id:%d\n",book.title,
+          book.author,book.subject,book.book_id);
+}
+```
+
+### 访问结构成员
+
+为了访问结构的成员，我们使用成员访问运算符 .    , 成员访问运算符是结构变量名称和我们要访问的结构成员之间的一个句号。你可以使用struct关键字来定义结构类型的变量
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+struct Book
+{
+  	char title[50];
+    char author[50];
+    char subject[100];
+    int book_id;
+};
+
+int main()
+{
+ 	struct Book book1;
+    struct Book book2;
+    
+    strcpy(book1.title,"title1");
+    strcpy(book1.author,"author1");
+    strcpy(book1.subject,"subject1");
+    book1.book_id = 123;
+    
+    strcpy(book2.title,"title2");
+    strcpy(book2.author,"author2");
+    strcpy(book2.subject,"subject2");
+    book2.book_id = 456;
+}
+```
+
+### 结构作为函数参数
+
+你可以把结构作为函数参数，传参方式与其他类型的变量或指针类似。
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+struct Book
+{
+    char title[50];
+    char author[50];
+    char subject[100];
+    int book_id;
+}
+
+//函数声明
+void printBook(struct Book book);
+
+int main(){
+    struct Book book1;
+    struct Book book2;
+    
+    strcpy(book1.title,"title1");
+    strcpy(book1.author,"author1");
+    strcpy(book1.subject,"subject1");
+    book1.book_id = 123;
+    
+    strcpy(book2.title,"title2");
+    strcpy(book2.author,"author2");
+    strcpy(book2.subject,"subject2");
+    book2.book_id = 456;
+    
+    printBook(book1);
+    printBook(book2);
+    
+    return 0;
+    
+}
+
+void printBook(struct Book book)
+{
+    printf("book title : %s \n",book.title);
+    printf("book author : %s \n",book.author);
+    printf("book subject : %s \n",book.subject);
+    printf("book book_id : %d \n",book.book_id);
+}
+```
+
+### 指向结构的指针
+
+你可以定义指向结构的指针，方式与定义指向其他类型的指针相似。
+
+```c
+struct Book *pointer;
+```
+
+你可以在上述定义的指针变量中存储结构变量的地址。为了查找结构变量的地址
+
+```c
+pointer = &book1;
+```
+
+为了使用指向该结构的指针访问结构的成员，你必须使用 -> 运算符
+
+```c
+pointer -> title
+```
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+struct Book
+{
+    char title[50];
+    char author[50];
+    char subject[100];
+    int book_Id;
+}
+
+void printBook(struct Book * book);
+
+int main()
+{
+    struct Book book1;
+    struct Book book2;
+    
+    strcpy(book1.title,"title1");
+    strcpy(book1.author,"author1");
+    strcpy(book1.subject,"subject1");
+    book1.book_id =123;
+    strcpy(book2.title,"title2");
+    strcpy(book2.author,"author2");
+    strcpy(book2.subject,"subject2");
+    book2.book_id =465;
+    
+    printBook(&book1);
+    printBook(&book2);
+    
+    return 0;
+}
+
+void printBook(struct Book *book)
+{
+    printf("book title is %s \n",book -> title);
+       printf("book author is %s \n",book -> author);
+       printf("book subjcet is %s \n",book -> subjcet);
+       printf("book book_id is %d \n",book -> book_id);
+}
+```
+
+### 位域
+
+有些信息在存储时，并不需要占用一个完整的字节，而只需占几个或一个二进制位。例如在存放一个开关量时，只有0和1两种状态，用1位二进制即可。为了节省存储空间，并使处理简单，c语言提供了一种数据结构，成为位域或位段。
+
+所谓位域是把一个字节中的二进位划分为几个不同的区域，并说明每个区域的位数。每个域有一个域名，允许在程序中按域名进行操作。这样就可以把几个不同的对象用一个字节的二进制位域来表示。
+
+- 用1位而今为存放一个开关量，只有0和1两种状态
+- 读取外部文件格式----可以读取非标准的文件格式，例如：9位的整数。
+
+#### 位域的定义和位域变量的说明
+
+位域定义与结构定义相仿，其形式为：
+
+```c
+struct 位域结构名
+{
+    位域列表
+}；
+```
+
+其中位域列表的形式为
+
+```c
+类型说明符 位域名： 位域长度
+```
+
+```c
+struct bs
+{
+    int a:8;
+    int b:2;
+    int c:6;
+} data;
+```
+
+说明data为bs变量，共占两个字节。其中位域a占8位，位域b占2位，位域c占6位。
+
+```c
+struct packed_struct
+{
+    unsigned int f1:1;
+    unsigned int f2:1;
+    unsigned int f3:1;
+    unsigned int f4:1;
+    unsigned int type:4;
+    unsigned int my_int:9;
+} pack;
+```
+
+在这里，packed_struct包含了６个成员，四个１位的标识符，一个４位的type，和一个９位的my_int。
+
+#### 对于位域的定义尚有以下几点说明
+
+- 一个位域存储在同一个字节中，如一个字节所剩空间不够存放另一个位域时，则会从下一单元起存放该位域。也可以有意使某位域从下一单元开始
+
+  ```c
+  struct bs
+  {
+      unsigned a:4;
+      unsigned  :4;	//空域
+      unsigned b:4;	//从下一单元开始存放
+      unsigned c:4;
+  }
+  ```
+
+  在这个位域定义中,a占第一个字节的4位,后4位填0表示不使用,b从第二字节开始,占用4位,c占用4位.
+
+- 由于位域不允许垮两个字节,因此位域的长度不能大于一个字节的长度,也就是说不能超过8位二进位.如果最大长度大于计算机的整数字长,一些编辑器可能会允许域的内存重叠,另外一些编译器可能会把大于一个域的部分存储在下一个字节中.
+
+- 位域可以是无名位域,这是它只用来作填充活调整位置,无名的位域是不能使用的.
+
+  ```c
+  struct k
+  {
+      int a:1;
+      int  :2;
+      int b:3;
+      int c:2;
+  }
+  ```
+
+  从以上分析看,位域在本质上就是一种结构类型,不过其成员是按二进制位分配的.
+
+#### 位域的使用
+
+位域的使用和结构成员的使用相同
+
+位域允许用各种格式输出
+
+```c
+main()
+{
+    struct bs
+    {
+        unsigned a:1;
+        unsigned b:3;
+        unsigned c:4;
+        
+    } bit ,*pbit;
+    
+    bit.a = 1;
+    bit.b = 7;
+    bit.c = 15;
+    
+    pbit = &bit;
+    pbit -> a = 0;
+    pbit -> b &= 3;
+    pbit -> c |= 1;
+    
+}
+```
+
+## C共用体
+
+共用体是一种特殊的数据类型,允许你在相同的内存位置存储不同的数据类型.你可以定义一个带有多成员的共同体,但是任何时候只能有一个成员带有值.共同体提供了一种使用相同的内存位置的有效方式.
+
+### 定义共同体
+
+为了定义共同体,你必须使用union语句,方式与定义结构类似.union语句定义了一个新的数据类型,带有多个成员,
+
+```c
+union Data
+{
+	int i;
+	float f;
+	char str[20];
+} data;
+```
+
+Data类型的变量可以存储一个整数,一个浮点数或者一个字符串,这意味着一个变量(相同的内存位置)可以存储多种类型的数据.你可以根据需要在一个共同体内使用任何内置的或者用户自定义的数据类型
+
+共同体占用的内存应足够存储共同体中最大的成员.如上,Data讲占用20个字节的内存空间,因为在各个成员中,字符串所占用的空间是最大的.
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+union Data
+{
+	int i;
+	float f;
+	char str[20];
+};
+
+int main
+{
+	union Data data;
+	printf("memory size by data :%d\n",sizeof(data));
+	
+	return 0;
+}
+```
+
+访问共同体成员
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+union Data
+{
+int i;
+float f;
+char str[20];
+};
+
+int main{
+  union Data data;
+    data.i=10;
+    data.f=220.5;
+    strcpy(data.str,"C programming");
+ 	
+    printf("data.i:%d\n",data.i);
+    printf("data.f:%d\n",data.f);
+    printf("data.str:%s\n",data.str);
+    
+    return 0;
+}
+```
+
+这里打印i和f的值会出现错误,因为最后赋值的变量占用了内存位置,只有str能够完整输出
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+union Data
+{
+int i;
+float f;
+char str[20];
+};
+
+int main{
+  union Data data;
+    data.i=10;
+     printf("data.i:%d\n",data.i);
+    
+    data.f=220.5;
+     printf("data.f:%d\n",data.f);
+    
+    strcpy(data.str,"C programming");
+ 	printf("data.str:%s\n",data.str);
+    
+    return 0;
+}
+```
+
+这里打印的都是正确的,因为同一时间只用到一个成员.
+
+## C typedef
+
+c语言提供了typedef关键字,你可以使用它来为类型取一个新的名字,
+
+```c
+typedef unsigned char AAD;
+```
+
+在这个定义之后,标识符AAD可作为类型unsigned char 的缩写
+
+```c
+AAD b1,b2;
+```
+
+按照惯例,定义时会大写字母,以便提醒用户类型名称是一个象征性的缩写.你可以用typedef来Wie用户自定义的数据类型取一个新的名字.
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+typedef struct Books
+{
+    char title[50];
+    char author[50];
+    char subject[100];
+    int book_id;
+} Book;
+
+int main()
+{
+    Book book;
+    
+    strcpy(book.title,"title1");
+    strcpy(book.author,"author1");
+    strcpy(book.subjcet,"subjcet1");
+    book.book_id = 123;
+    
+    return 0;
+}
+```
+
+### typedef VS #define
+
+#define是c指令,用于为各种数据类型定义别名,与typedef类似,但是他们有几个不同点
+
+- typedef仅限于为类型定义符号名称,#define不仅可以为类型定义别名,也能为数值定义别名,比如定义1为ONE
+- typedef是由编译器执行解释的,#define语句是由预编译器进行处理的
+
+```c
+#include <stdio.h>
+
+#define TRUE 1
+#define FALSE 0
+
+int main(){
+    printf("TRUE 值为 %d\n",TRUE);
+    printf("FALSE 值为 %d\n",FALSE);
+    return 0;
+}
+```
+
